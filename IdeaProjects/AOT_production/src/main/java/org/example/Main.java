@@ -1,0 +1,102 @@
+package org.example;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.agent.Ant;
+import org.example.config.ModelConfig;
+import org.example.environment.Cell;
+import org.example.environment.Grid;
+import org.example.simulation.Manager;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
+import java.util.Random;
+
+public class Main {
+    public static int SimulationMaxTicks;
+    public static int SimulationTickDelayMs;
+    public static int SimulationRandomSeed;
+    public static int GridWidth;
+    public static int GridHeight;
+    public static int GridDefaultCapacity;
+    public static int NestX;
+    public static int NestY;
+    public static int Ants;
+    public static double PheromonesEvaporationPerTick;
+    public static double PheromonesDepositAmount;
+    public static double PheromonesRandomnessFactor;
+    public static List<ModelConfig.Coordinate> Obstacles;
+    public static List<ModelConfig.FoodSource> FoodSource;
+    public static Random random = new Random(SimulationRandomSeed); // TODO: 17/05/2026 add the seed SimulationRandomSeed
+
+
+    public static void main(String[] args) {
+
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        try {
+            // 1. Read the JSON file as a List of ModelConfig objects
+            List<ModelConfig> configList = mapper.readValue(
+                    new File("src\\main\\java\\org\\example\\config\\modelConfig.json"),
+                    new TypeReference<List<ModelConfig>>() {}
+            );
+
+            if (!configList.isEmpty()) {
+                ModelConfig config = configList.get(0);
+
+                SimulationMaxTicks = config.simulation().maxTicks();
+                SimulationTickDelayMs = config.simulation().tickDelayMs();
+                SimulationRandomSeed = config.simulation().randomSeed();
+
+                GridWidth = config.grid().width();
+                GridHeight = config.grid().height();
+                GridDefaultCapacity = config.grid().defaultCapacity();
+
+                NestX = config.nest().x();
+                NestY = config.nest().y();
+
+                Ants = config.ants();
+
+                PheromonesEvaporationPerTick = config.pheromones().evaporationPerTick();
+                PheromonesDepositAmount = config.pheromones().depositAmount();
+                PheromonesRandomnessFactor = config.pheromones().randomnessFactor();
+
+                Obstacles = config.obstacles();
+
+                FoodSource = config.foodSources();
+            } else {
+                System.out.println("The JSON array is empty.");
+            }
+
+        } catch (IOException e) {
+            System.err.println("Failed to parse JSON file: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        Grid grid = new Grid(GridWidth, GridHeight, GridDefaultCapacity);
+
+        Cell nest = new Cell(GridDefaultCapacity,0,true);
+        grid.setCell(NestX, NestY, nest);
+
+        for(ModelConfig.Coordinate obstacleCoordinates : Obstacles){
+            grid.setCell(obstacleCoordinates.x(), obstacleCoordinates.y(), new Cell(0, 0, false));
+        }
+
+        for(ModelConfig.FoodSource foodSource : FoodSource){
+            grid.setCell(foodSource.x(), foodSource.y(), new Cell(GridDefaultCapacity, foodSource.amount(), false));
+        }
+
+        Manager manager = new Manager(grid);
+
+        for (int i = 0; i < Ants; i++) {
+            Ant worker = new Ant(i, 100);
+            manager.registerAnt(worker, NestX, NestY);
+        }
+
+        manager.runSimulationLoop();
+
+    }
+}
