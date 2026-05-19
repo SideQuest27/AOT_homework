@@ -29,7 +29,7 @@ public class Main {
     public static double PheromonesRandomnessFactor;
     public static List<ModelConfig.Coordinate> Obstacles;
     public static List<ModelConfig.FoodSource> FoodSource;
-    public static Random random = new Random(SimulationRandomSeed); // TODO: 17/05/2026 add the seed SimulationRandomSeed
+    public static Random random = new Random(); // TODO: 17/05/2026 add the seed SimulationRandomSeed
 
 
     public static void main(String[] args) {
@@ -40,7 +40,7 @@ public class Main {
         try {
             // 1. Read the JSON file as a List of ModelConfig objects
             List<ModelConfig> configList = mapper.readValue(
-                    new File("src\\main\\java\\org\\example\\config\\modelConfig.json"),
+                    new File("IdeaProjects/AOT_production/src/main/java/org/example/config/modelConfig.json"),
                     new TypeReference<List<ModelConfig>>() {}
             );
 

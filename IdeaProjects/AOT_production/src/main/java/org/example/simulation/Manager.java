@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.example.Main;
 import org.example.agent.Ant;
+import org.example.config.ModelConfig;
 import org.example.enums.ActionType;
 import org.example.enums.AntState;
 import org.example.enums.MessageType;
@@ -12,10 +13,7 @@ import org.example.environment.Grid;
 import org.example.model.Action;
 import org.example.model.Perception;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.example.Main.*;
 
@@ -57,9 +55,7 @@ public class Manager {
         currentPos[1] = targetY;
         targetCell.incrementAnts();
 
-        if (targetCell.isNest() || targetCell.hasFood()) {
-            ant.refillEnergy();
-        }
+
 
         return true;
     }
@@ -102,61 +98,69 @@ public class Manager {
     private int firstFoodDiscoveredTick = -1;
 
     private void logSystemState() {
-        // 1. Core Population State Counters
+        // Core Population State Counters [cite: 250, 251, 252]
         long antsAlive = ants.stream().filter(Ant::isAlive).count();
         long antsSearching = ants.stream().filter(a -> a.isAlive() && a.getState() == AntState.SEARCHING).count();
         long antsReturning = ants.stream().filter(a -> a.isAlive() && a.getState() == AntState.RETURNING).count();
 
-        // 2. Nest Inventory Tracking
-        int totalFoodInNest = grid.getCell(NestX, NestY).getFoodAmount();
+        // Nest Inventory Tracking (Nest at 10,10) [cite: 249, 270]
+        int totalFoodInNest = grid.getCell(10, 10).getFoodAmount();
 
-        // 3. Capture Discovery Speed (Fires only once upon first delivery)
+        // Capture Discovery Speed [cite: 254]
         if (firstFoodDiscoveredTick == -1 && totalFoodInNest > 0) {
             firstFoodDiscoveredTick = currentTick;
         }
 
-        // TODO: 17/05/2026 make the foodSource logging dynamic
+        // 3. Dynamic CSV Header Injection using the config list size [cite: 247]
+        if (currentTick == 0) {
+            StringJoiner header = new StringJoiner(",");
+            header.add("tick").add("totalFoodInNest").add("antsAlive").add("antsSearching").add("antsReturning");
 
-        // 4. Source Exploitation Bin Counters (Sensing individual coordinates from setup)
-        int foodRemainingSrc1 = grid.getCell(2, 2).getFoodAmount();   // Source 1 [cite: 278]
-        int foodRemainingSrc2 = grid.getCell(18, 3).getFoodAmount();  // Source 2 [cite: 279]
-        int foodRemainingSrc3 = grid.getCell(15, 17).getFoodAmount(); // Source 3 [cite: 280]
+            // Loop using the configuration count
+            for (int i = 0; i < FoodSource.size(); i++) {
+                header.add("foodSrc" + (i + 1) + "Remaining");
+            }
 
-        // 5. Active Pheromone Path Counter [cite: 255]
-        // Loops through the map to count how many cells have active scent markers left
+            header.add("firstFoodDiscoveredTick").add("pheromoneTrailsActive");
+            logger.info(header.toString());
+        }
+
+        // 4. Build CSV Data Row
+        StringJoiner csvRow = new StringJoiner(",");
+        csvRow.add(String.valueOf(currentTick));
+        csvRow.add(String.valueOf(totalFoodInNest));
+        csvRow.add(String.valueOf(antsAlive));
+        csvRow.add(String.valueOf(antsSearching));
+        csvRow.add(String.valueOf(antsReturning));
+
+
+
+
+        // 5. THE SAME TYPE OF LOGIC: Iterate directly over your ModelConfig sources! [cite: 253]
+        for (ModelConfig.FoodSource foodSource : FoodSource) {
+            Cell cell = grid.getCell(foodSource.x(), foodSource.y());
+            int amount = (cell != null) ? cell.getFoodAmount() : 0;
+            csvRow.add(String.valueOf(amount));
+        }
+
+        // Calculate Active Pheromone Paths [cite: 255]
         int pheromoneTrailsActive = 0;
         for (int x = 0; x < grid.getWidth(); x++) {
             for (int y = 0; y < grid.getHeight(); y++) {
                 Cell cell = grid.getCell(x, y);
-                if (cell != null) {
-                    // A trail cell is active if food pheromone > 0, or nest pheromone > 0 (ignoring the permanent nest hub)
-                    if (cell.getFoodPheromone() > 0.0 || (cell.getNestPheromone() > 0.0 && !cell.isNest())) {
+                if (cell != null && !cell.isNest()) {
+                    if (cell.getFoodPheromone() > 0.0 || cell.getNestPheromone() > 0.0) {
                         pheromoneTrailsActive++;
                     }
                 }
             }
         }
 
-        // 6. CSV Header Injection [cite: 247]
-        if (currentTick == 0) {
-            logger.info("tick,totalFoodInNest,antsAlive,antsSearching,antsReturning,foodSrc1Remaining,foodSrc2Remaining,foodSrc3Remaining,firstFoodDiscoveredTick,pheromoneTrailsActive");
-        }
+        // Append remaining metrics and log row [cite: 245, 246]
+        csvRow.add(String.valueOf(firstFoodDiscoveredTick));
+        csvRow.add(String.valueOf(pheromoneTrailsActive));
 
-        // 7. Format Metrics Line and Print to Log4j Target File [cite: 245-247]
-        String csvRow = String.format("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d",
-                currentTick,
-                totalFoodInNest,
-                antsAlive,
-                antsSearching,
-                antsReturning,
-                foodRemainingSrc1,
-                foodRemainingSrc2,
-                foodRemainingSrc3,
-                firstFoodDiscoveredTick,
-                pheromoneTrailsActive
-        );
-
-        logger.info(csvRow);
+        logger.info(csvRow.toString());
     }
 
     public void runSimulationLoop(){
