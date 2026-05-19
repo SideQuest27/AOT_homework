@@ -2,7 +2,6 @@ package org.example.simulation;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.example.Main;
 import org.example.agent.Ant;
 import org.example.config.ModelConfig;
 import org.example.enums.ActionType;
@@ -55,8 +54,6 @@ public class Manager {
         currentPos[1] = targetY;
         targetCell.incrementAnts();
 
-
-
         return true;
     }
 
@@ -95,23 +92,20 @@ public class Manager {
         return ants.stream().anyMatch(Ant::isAlive);
     }
 
-    private int firstFoodDiscoveredTick = -1;
+    private int firstFoodDeliveredTick = -1;
 
     private void logSystemState() {
-        // Core Population State Counters [cite: 250, 251, 252]
+
         long antsAlive = ants.stream().filter(Ant::isAlive).count();
         long antsSearching = ants.stream().filter(a -> a.isAlive() && a.getState() == AntState.SEARCHING).count();
         long antsReturning = ants.stream().filter(a -> a.isAlive() && a.getState() == AntState.RETURNING).count();
 
-        // Nest Inventory Tracking (Nest at 10,10) [cite: 249, 270]
-        int totalFoodInNest = grid.getCell(10, 10).getFoodAmount();
+        int totalFoodInNest = grid.getCell(NestX, NestY).getFoodAmount();
 
-        // Capture Discovery Speed [cite: 254]
-        if (firstFoodDiscoveredTick == -1 && totalFoodInNest > 0) {
-            firstFoodDiscoveredTick = currentTick;
+        if (firstFoodDeliveredTick == -1 && totalFoodInNest > 0) {
+            firstFoodDeliveredTick = currentTick;
         }
 
-        // 3. Dynamic CSV Header Injection using the config list size [cite: 247]
         if (currentTick == 0) {
             StringJoiner header = new StringJoiner(",");
             header.add("tick").add("totalFoodInNest").add("antsAlive").add("antsSearching").add("antsReturning");
@@ -121,11 +115,10 @@ public class Manager {
                 header.add("foodSrc" + (i + 1) + "Remaining");
             }
 
-            header.add("firstFoodDiscoveredTick").add("pheromoneTrailsActive");
+            header.add("firstFoodDeliveredTick").add("pheromoneTrailsActive");
             logger.info(header.toString());
         }
 
-        // 4. Build CSV Data Row
         StringJoiner csvRow = new StringJoiner(",");
         csvRow.add(String.valueOf(currentTick));
         csvRow.add(String.valueOf(totalFoodInNest));
@@ -133,17 +126,12 @@ public class Manager {
         csvRow.add(String.valueOf(antsSearching));
         csvRow.add(String.valueOf(antsReturning));
 
-
-
-
-        // 5. THE SAME TYPE OF LOGIC: Iterate directly over your ModelConfig sources! [cite: 253]
         for (ModelConfig.FoodSource foodSource : FoodSource) {
             Cell cell = grid.getCell(foodSource.x(), foodSource.y());
             int amount = (cell != null) ? cell.getFoodAmount() : 0;
             csvRow.add(String.valueOf(amount));
         }
 
-        // Calculate Active Pheromone Paths [cite: 255]
         int pheromoneTrailsActive = 0;
         for (int x = 0; x < grid.getWidth(); x++) {
             for (int y = 0; y < grid.getHeight(); y++) {
@@ -156,8 +144,7 @@ public class Manager {
             }
         }
 
-        // Append remaining metrics and log row [cite: 245, 246]
-        csvRow.add(String.valueOf(firstFoodDiscoveredTick));
+        csvRow.add(String.valueOf(firstFoodDeliveredTick));
         csvRow.add(String.valueOf(pheromoneTrailsActive));
 
         logger.info(csvRow.toString());

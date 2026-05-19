@@ -81,9 +81,8 @@ public class Ant {
 
     public void reason(){
         if(!isAlive()) return;
-        // This is buggy and needs to be fixed
+
         if (state == AntState.SEARCHING && currentPerception.getCurrentCell().isHasFood() && !carryingFood && !currentPerception.getCurrentCell().isNest() ){
-            // besides directly changing the state ill set a decided state variable and save the state there
              intendedState = AntState.RETURNING;
         }
         if (state == AntState.RETURNING && currentPerception.getCurrentCell().isNest() && isCarryingFood()){
@@ -119,9 +118,13 @@ public class Ant {
 
             double weight = PheromonesRandomnessFactor + pheromoneValue;
 
-            if (lastMoveAction != null && dir == getOppositeDirection(lastMoveAction)) {
+            if ((lastMoveAction != null && dir == getOppositeDirection(lastMoveAction))) {
                 weight *= 0.1;
             }
+            if ((failedDirection != null && dir  == failedDirection)){
+                weight = 0.0;
+            }
+
             weights.put(dir,weight);
             totalWeight += weight;
         }

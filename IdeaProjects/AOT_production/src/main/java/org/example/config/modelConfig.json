@@ -21,7 +21,7 @@
       { "x": 15, "y": 17, "amount": 10 },
       { "x": 16, "y": 15, "amount": 10 }
     ],
-    "ants": 40,
+    "ants": 15,
     "pheromones": {
       "evaporationPerTick": 1,
       "depositAmount": 10,
