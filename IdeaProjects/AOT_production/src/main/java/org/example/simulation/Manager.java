@@ -17,8 +17,8 @@ import java.util.*;
 import static org.example.Main.*;
 
 public class Manager {
-    private final Grid grid;
-    private final List<Ant> ants;
+    private static Grid grid;
+    private static List<Ant> ants;
     private final Map<Ant, int[]> antPositions;
 
     private int currentTick = 0;
@@ -92,7 +92,7 @@ public class Manager {
         return ants.stream().anyMatch(Ant::isAlive);
     }
 
-    private int firstFoodDeliveredTick = -1;
+    private static int firstFoodDeliveredTick = -1;
 
     private void logSystemState() {
 
@@ -187,6 +187,37 @@ public class Manager {
 
             currentTick++;
         }
+    }
+
+    public void printAggregatedScore(){
+        long antsAlive = ants.stream().filter(Ant::isAlive).count();
+        int totalFoodInNest = grid.getCell(NestX, NestY).getFoodAmount();
+
+        double foodRatio = 0.0;
+        int initialTotalWorldFood = FoodSource.stream().map((x)-> x.amount()).reduce(0, (a, b) -> a + b);
+        if (initialTotalWorldFood > 0) {
+            foodRatio = (double) totalFoodInNest / initialTotalWorldFood;
+        }
+
+        double discoveryRatio = 0.0;
+        if (firstFoodDeliveredTick > 0) {
+            discoveryRatio = (double) (SimulationMaxTicks - firstFoodDeliveredTick) / SimulationMaxTicks;
+        }
+
+        double survivalRatio = 0.0;
+        if (!ants.isEmpty()) {
+            survivalRatio = (double) antsAlive / ants.size();
+        }
+
+        List<Double> metrics = Arrays.asList(foodRatio, discoveryRatio, survivalRatio);
+        double sumOfSquares = metrics.stream()
+                .map(m -> m * m)
+                .reduce(0.0, Double::sum);
+
+        double vectorLength = Math.sqrt(sumOfSquares);
+        double maxPossibleLength = Math.sqrt(metrics.size());
+
+        System.out.println("\u001B[32m"+"Final Score: "+String.format("%.2f",(vectorLength / maxPossibleLength) * 100.0)+"\u001B[0m");
     }
 
 

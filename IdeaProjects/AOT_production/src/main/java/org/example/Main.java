@@ -11,7 +11,6 @@ import org.example.simulation.Manager;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 
 public class Main {
@@ -96,6 +95,9 @@ public class Main {
         }
 
         manager.runSimulationLoop();
-
+        manager.printAggregatedScore();
     }
+
+
+
 }
