@@ -19,7 +19,7 @@ import static org.example.Main.*;
 public class Manager {
     private static Grid grid;
     private static List<Ant> ants;
-    private final Map<Ant, int[]> antPositions;
+    private final Map<Ant, int[]> antPositions ;
 
     private int currentTick = 0;
     private static final Logger logger = LogManager.getLogger(Manager.class);
@@ -27,7 +27,7 @@ public class Manager {
     public Manager(Grid grid) {
         this.grid = grid;
         this.ants = new ArrayList<>();
-        this.antPositions = new HashMap<>();
+        this.antPositions = new LinkedHashMap<>();
     }
 
     public void registerAnt(Ant ant, int startX, int startY){
