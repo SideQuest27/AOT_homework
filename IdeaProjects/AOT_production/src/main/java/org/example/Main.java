@@ -51,7 +51,7 @@ public class Main {
                 SimulationRandomSeed = config.simulation().randomSeed();
 
 
-                random = new Random(738289730316700L);
+                random = new Random(SimulationRandomSeed);
 
                 GridWidth = config.grid().width();
                 GridHeight = config.grid().height();

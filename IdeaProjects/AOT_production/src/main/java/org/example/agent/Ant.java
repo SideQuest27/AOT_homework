@@ -107,7 +107,7 @@ public class Ant {
             return new Action(getOppositeDirection(lastMoveAction), this);
         }
 
-        Map<ActionType,Double> weights = new HashMap<>();
+        Map<ActionType,Double> weights = new LinkedHashMap<>();
         double totalWeight = 0.0;
 
         for (Map.Entry<ActionType, CellPerception> entry : neighbours.entrySet()) {

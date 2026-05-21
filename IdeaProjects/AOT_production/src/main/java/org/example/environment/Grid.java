@@ -5,6 +5,7 @@ import org.example.model.CellPerception;
 import org.example.model.Perception;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Grid {
@@ -43,7 +44,7 @@ public class Grid {
 
     public Perception getPerceptionForPosition(int x, int y) {
         CellPerception current = cells[x][y].toPerception();
-        Map<ActionType, CellPerception> neighbors = new HashMap<>();
+        Map<ActionType, CellPerception> neighbors = new LinkedHashMap<>();
         addNeighborPerception(neighbors, ActionType.UP, x, y - 1);
         addNeighborPerception(neighbors, ActionType.DOWN, x, y + 1);
         addNeighborPerception(neighbors, ActionType.LEFT, x - 1, y);
