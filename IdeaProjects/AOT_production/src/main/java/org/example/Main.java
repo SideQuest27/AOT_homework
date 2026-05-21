@@ -28,7 +28,8 @@ public class Main {
     public static double PheromonesRandomnessFactor;
     public static List<ModelConfig.Coordinate> Obstacles;
     public static List<ModelConfig.FoodSource> FoodSource;
-    public static Random random = new Random(); // TODO: 19/05/2026 add the randomness seed
+    public static double EnergyCostMove;
+    public static Random random = null; // TODO: 19/05/2026 add the randomness seed
 
 
     public static void main(String[] args) {
@@ -49,6 +50,9 @@ public class Main {
                 SimulationTickDelayMs = config.simulation().tickDelayMs();
                 SimulationRandomSeed = config.simulation().randomSeed();
 
+
+                random = new Random(738289730316700L);
+
                 GridWidth = config.grid().width();
                 GridHeight = config.grid().height();
                 GridDefaultCapacity = config.grid().defaultCapacity();
@@ -65,6 +69,7 @@ public class Main {
                 Obstacles = config.obstacles();
 
                 FoodSource = config.foodSources();
+
             } else {
                 System.out.println("The JSON array is empty.");
             }

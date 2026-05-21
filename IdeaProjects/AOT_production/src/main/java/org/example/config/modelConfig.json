@@ -3,26 +3,25 @@
     "simulation": {
       "maxTicks": 1000,
       "tickDelayMs": 0,
-      "randomSeed": 27
+      "randomSeed": 14
     },
     "grid": {
       "width": 10,
       "height": 10,
-      "defaultCapacity": 30
+      "defaultCapacity": 20
     },
-    "nest": { "x": 9, "y": 9 },
+    "nest": { "x": 5, "y": 0 },
     "obstacles": [
-      { "x": 5, "y": 5 },
-      { "x": 5, "y": 6 }
+      { "x": 4, "y": 2 }, { "x": 4, "y": 3 }, { "x": 4, "y": 6 },
+      { "x": 6, "y": 2 }, { "x": 6, "y": 3 }, { "x": 6, "y": 6 }
     ],
     "foodSources": [
-      { "x": 2, "y": 2, "amount": 5 },
-      { "x": 8, "y": 3, "amount": 5 },
-      { "x": 8, "y": 8, "amount": 5 }
+      { "x": 5, "y": 3, "amount": 10 },
+      { "x": 5, "y": 6, "amount": 50 }
     ],
-    "ants": 25,
+    "ants": 10,
     "pheromones": {
-      "evaporationPerTick": 1,
+      "evaporationPerTick": 0.5,
       "depositAmount": 10,
       "randomnessFactor": 0.2
     },
@@ -32,4 +31,6 @@
       "drop": 0
     }
   }
+
+
 ]
