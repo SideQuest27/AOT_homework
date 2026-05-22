@@ -2,7 +2,8 @@ package org.example.environment;
 
 import org.example.model.CellPerception;
 
-public class Cell {
+public class
+Cell {
     private int capacity;
     private int foodAmount;
     private double nestPheromone;

@@ -10,8 +10,6 @@ import org.example.simulation.Manager;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Random;
 
@@ -36,21 +34,11 @@ public class Main {
 
     public static void main(String[] args) {
 
-
         ObjectMapper mapper = new ObjectMapper();
-        String firstVar = "";
-        if (!Paths.get("","").toAbsolutePath().toString().contains("IdeaProjects\\AOT_homework")){
-               firstVar = "IdeaProjects/AOT_homework/";
-        }
-
-        Path relativePath = Paths.get( firstVar,"IdeaProjects/AOT_production/src/main/java/org/example/config/modelConfig.json");
-        Path absolutePath = relativePath.toAbsolutePath();
-
-
 
         try {
             List<ModelConfig> configList = mapper.readValue(
-                    new File(absolutePath.toString()),
+                    new File(/* Paste the Absolute File Path to modelConfig.json here*/""),
                     new TypeReference<List<ModelConfig>>() {}
             );
 
@@ -113,7 +101,5 @@ public class Main {
         manager.runSimulationLoop();
         manager.printAggregatedScore();
     }
-
-
 
 }
