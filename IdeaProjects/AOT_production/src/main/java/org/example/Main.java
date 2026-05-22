@@ -10,6 +10,8 @@ import org.example.simulation.Manager;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Random;
 
@@ -37,9 +39,14 @@ public class Main {
 
         ObjectMapper mapper = new ObjectMapper();
 
+        Path relativePath = Paths.get("", "IdeaProjects/AOT_production/src/main/java/org/example/config/modelConfig.json");
+        Path absolutePath = relativePath.toAbsolutePath();
+
+        System.out.println(absolutePath);
+
         try {
             List<ModelConfig> configList = mapper.readValue(
-                    new File(System.getProperty("user.home") + "\\IdeaProjects\\AOT_homework\\IdeaProjects\\AOT_production\\src\\main\\java\\org\\example\\config\\modelConfig.json"),
+                    new File(absolutePath.toString()),
                     new TypeReference<List<ModelConfig>>() {}
             );
 
