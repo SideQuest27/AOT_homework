@@ -1,36 +1,3 @@
 [
-  {
-    "simulation": {
-      "maxTicks": 1000,
-      "tickDelayMs": 0,
-      "randomSeed": 2
-    },
-    "grid": {
-      "width": 10,
-      "height": 10,
-      "defaultCapacity": 20
-    },
-    "nest": { "x": 5, "y": 0 },
-    "obstacles": [
-      { "x": 4, "y": 2 }, { "x": 4, "y": 3 }, { "x": 4, "y": 4 }, { "x":
-      4, "y": 5 },{ "x": 4, "y": 6 },
-      { "x": 6, "y": 2 }, { "x": 6, "y": 3 }, { "x": 6, "y": 4 }, { "x":
-      6, "y": 5 },{ "x": 6, "y": 6 }
-    ],
-    "foodSources": [
-      { "x": 5, "y": 3, "amount": 10 },
-      { "x": 5, "y": 6, "amount": 50 }
-    ],
-    "ants": 20,
-    "pheromones": {
-      "evaporationPerTick": 0.5,
-      "depositAmount": 10,
-      "randomnessFactor": 0.2
-    },
-    "energyCosts": {
-      "move": 1,
-      "pickUp": 0,
-      "drop": 0
-    }
-  }
+  { "simulation": { "maxTicks": 1000, "tickDelayMs": 0, "randomSeed": 42 }, "grid": { "width": 24, "height": 24, "defaultCapacity": 20 }, "nest": { "x": 12, "y": 12 }, "obstacles": [], "foodSources": [ { "x": 4, "y": 12, "amount": 10 }, { "x": 12, "y": 4, "amount": 10 }, { "x": 20, "y": 12, "amount": 10 }, { "x": 12, "y": 20, "amount": 10 } ], "ants": 15, "pheromones": { "evaporationPerTick": 0.05, "depositAmount": 10.0, "randomnessFactor": 0.2 }, "energyCosts": { "move": 1, "pickUp": 0, "drop": 0 } }
 ]

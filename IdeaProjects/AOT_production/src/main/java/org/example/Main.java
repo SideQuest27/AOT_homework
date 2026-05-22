@@ -39,7 +39,7 @@ public class Main {
 
         try {
             List<ModelConfig> configList = mapper.readValue(
-                    new File("src\\main\\java\\org\\example\\config\\modelConfig.json"),
+                    new File(System.getProperty("user.home") + "\\IdeaProjects\\AOT_homework\\IdeaProjects\\AOT_production\\src\\main\\java\\org\\example\\config\\modelConfig.json"),
                     new TypeReference<List<ModelConfig>>() {}
             );
 
