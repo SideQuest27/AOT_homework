@@ -40,7 +40,7 @@ public class Main {
         ObjectMapper mapper = new ObjectMapper();
         String firstVar = "";
         if (!Paths.get("","").toAbsolutePath().toString().contains("IdeaProjects\\AOT_homework")){
-            firstVar = "IdeaProjects/AOT_homework/";
+               firstVar = "IdeaProjects/AOT_homework/";
         }
 
         Path relativePath = Paths.get( firstVar,"IdeaProjects/AOT_production/src/main/java/org/example/config/modelConfig.json");
