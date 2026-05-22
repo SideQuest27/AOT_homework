@@ -38,11 +38,15 @@ public class Main {
 
 
         ObjectMapper mapper = new ObjectMapper();
+        String firstVar = "";
+        if (!Paths.get("","").toAbsolutePath().toString().contains("IdeaProjects\\AOT_homework")){
+            firstVar = "IdeaProjects/AOT_homework/";
+        }
 
-        Path relativePath = Paths.get("", "IdeaProjects/AOT_production/src/main/java/org/example/config/modelConfig.json");
+        Path relativePath = Paths.get( firstVar,"IdeaProjects/AOT_production/src/main/java/org/example/config/modelConfig.json");
         Path absolutePath = relativePath.toAbsolutePath();
 
-        System.out.println(absolutePath);
+
 
         try {
             List<ModelConfig> configList = mapper.readValue(
